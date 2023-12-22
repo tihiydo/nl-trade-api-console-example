@@ -45,7 +45,6 @@ const getLatestRsaPublicKey = async (access_token) =>
     if(jsonResponse.response?.data?.result)
     {
         const rsaKey = caesarEncrypt(atob(jsonResponse.response.data.result), -13)
-        await fs.promises.writeFile("./src/data/key.pem", rsaKey, { flag: 'w' });
         return String(rsaKey);
     }
 }
