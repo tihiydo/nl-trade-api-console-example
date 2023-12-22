@@ -7,7 +7,7 @@
   "scripts": 
   {
     "manager": "node exchangeManager.js",
-    "proccess": "node proccess.js"
+    "proccess": "node process.js"
   },
   "author": "",
   "license": "ISC",
