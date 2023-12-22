@@ -5,6 +5,7 @@ import readline from 'readline'
 
 var invoiceUid = ""
 var token = ""
+var timeFix = 0
 
 const rl = readline.createInterface 
 ({
@@ -46,7 +47,9 @@ const init = async() =>
 const selectEvent = async (cmd) =>
 {
     let request;
-    switch(String(cmd))
+    let command = String(cmd).split(" ")
+    
+    switch(String(command[0]))
     {
         case 'get':
             request = await apiRequest("https://api.nltrade.in/method/RemoteInvoiceApi", {"type": "get", "uid_link": invoiceUid}, token)
@@ -61,6 +64,20 @@ const selectEvent = async (cmd) =>
             else if(request.response.data.invoice[0].status == "success")
             {
                 Response(`Виконано успішно`, true, false)
+                exit()
+            }
+            else if(request.response.data.invoice[0].status == "pay")
+            {
+                timeFix += 1
+                if(timeFix == 2)
+                {
+                    Response("Сумма заявки змінненна, теперішня " + request.response.data.invoice[0].send_value, false, false)
+                }
+                else
+                {
+                    Response(status[request.response.data.invoice[0].status], false, false)
+                }
+
             }
             else
             {
@@ -75,7 +92,7 @@ const selectEvent = async (cmd) =>
             break;
     
         case 'photo':
-            request = await apiRequest("https://api.nltrade.in/method/RemoteInvoiceApi", {"type": "update", "uid_link": invoiceUid, "status": "notApprove", "log": "Фото підтвердження відправленно"}, token)
+            request = await apiRequest("https://api.nltrade.in/method/RemoteInvoiceApi", {"type": "update", "uid_link": invoiceUid, "log": "Фото підтвердження відправленно", "approve_photo": command[1]}, token)
             break;
         
         case 'default':
